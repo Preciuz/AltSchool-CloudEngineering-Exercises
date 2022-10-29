@@ -1,0 +1,52 @@
+---
+- name: setup apache2 on all servers
+  hosts: all
+  become: yes
+  become_method: sudo
+  vars:
+    apache2_version: 2.4.41
+
+
+  tasks:
+  - name: install apache2 to server
+    command: apt install apache2 -y
+
+
+
+  - name: start apache2
+    service:
+      name: apache2
+      enabled: yes
+      state: started
+
+
+  - name: Get apache2 installed version
+    command: apache2 -v
+    register: apache2_version
+
+  - name: print apache2 version
+    debug:
+      msg: "The current version of apache2 is {{apache2_version}}"
+
+  - name: Get the status of apache2 service
+    command: systemctl status apache2
+
+  - name: set timezone
+    command: timedatectl set-timezone Africa/Lagos
+
+  - name: Get status of timezone
+    command: timedatectl
+
+  - name: install software packages
+    command: apt install software-properties-common
+
+  - name: Add repository ppa:ondrej/php
+    apt_repository:
+      repo: "ppa:ondrej/php"
+      state: present
+
+  - name: Updating the repo
+    apt: update_cache=yes
+
+  - name: install php7.4
+    apt: name=php7.4  state=present

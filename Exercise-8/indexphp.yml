@@ -1,0 +1,12 @@
+---
+- name: add file from localhost(this VM) to remote server
+  hosts: all
+  become: true
+  become_method: sudo
+
+  tasks:
+
+    - name: add file to directory
+      copy:
+        src: /home/vagrant/ansible/index.php
+        dest: /var/www/html/index.php
